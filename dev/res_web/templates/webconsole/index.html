@@ -1,0 +1,63 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Pyide</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/js/scrollToBottom.js"></script>
+</head>
+<body>
+    <div class="main">
+        <P>input:</P>
+        <textarea class="input_area">ping -c2 jarbob.com</textarea>
+        <P>output:</P>
+        <div class="output_area"></div>
+        <!--<p>command:stop  to stop<br/></p>-->
+
+
+    </div>
+<script type="text/javascript">
+    var total = 0;
+    function get_data() {
+
+        jQuery.get('/webconsole?action=get',function (ret) {
+            var o = jQuery('.main .output_area');
+            if(ret != 0){
+                if(++total >= 1000){
+                    //console.log(total)
+                    total = 0;
+
+                   o.children('p').remove()
+
+                }
+                o.append("<p>" + ret + "</p>");
+                //console.log(o.scrollBottom());
+                o.scrollBottom(0)
+                //o.scrollTop(o.scrollHeight);
+
+            }
+        });
+    }
+
+
+    jQuery('document').ready(function () {
+        setInterval(get_data, 800);
+        jQuery('.main .input_area').keydown(function (event) {
+            if('13' == event.keyCode){
+                event.preventDefault();
+                jQuery.post('/webconsole', jQuery(this).val())
+                //get_data();
+
+            
+              }
+        });
+
+
+    });
+</script>
+
+</body>
+</html>
